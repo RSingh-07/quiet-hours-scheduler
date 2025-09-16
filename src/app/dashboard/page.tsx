@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null); // ✅ fixed no-explicit-any
+  const [user, setUser] = useState<User | null>(null); // ✅ no 'any'
   const [title, setTitle] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -16,8 +16,11 @@ export default function DashboardPage() {
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
-      if (!data.user) router.push('/login');
-      else setUser(data.user);
+      if (!data.user) {
+        router.push('/login');
+      } else {
+        setUser(data.user);
+      }
     };
     getUser();
   }, [router]);
@@ -44,7 +47,9 @@ export default function DashboardPage() {
         setTitle('');
         setStartTime('');
         setEndTime('');
-      } else setMessage('Error creating block.');
+      } else {
+        setMessage('Error creating block.');
+      }
     } catch (err) {
       console.error(err);
       setMessage('Something went wrong.');
