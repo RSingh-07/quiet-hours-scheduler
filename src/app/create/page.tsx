@@ -9,56 +9,46 @@ export default function CreateBlockPage() {
   const [message, setMessage] = useState('');
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const res = await fetch('/api/createTimeBlock', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, startTime, endTime }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setMessage('Block created successfully!');
-        router.push('/dashboard');
-      } else {
-        setMessage('Error creating block.');
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage('Error creating block.');
+
+    const res = await fetch('/api/createTimeBlock', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, startTime, endTime }),
+    });
+
+    const data = await res.json();
+    if (data.error) setMessage(`Error creating block: ${data.error}`);
+    else {
+      setMessage('Block created successfully!');
+      router.push('/dashboard'); // redirect after creation
     }
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '40px auto' }}>
+    <div>
       <h1>Create Study Block</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '15px' }}>
+      <form onSubmit={handleCreate}>
         <input
           type="text"
           placeholder="Title"
           value={title}
-          onChange={e => setTitle(e.target.value)}
+          onChange={(e) => setTitle(e.target.value)}
           required
         />
-        <label>
-          Start Time:
-          <input
-            type="datetime-local"
-            value={startTime}
-            onChange={e => setStartTime(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          End Time:
-          <input
-            type="datetime-local"
-            value={endTime}
-            onChange={e => setEndTime(e.target.value)}
-            required
-          />
-        </label>
+        <input
+          type="datetime-local"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+          required
+        />
+        <input
+          type="datetime-local"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+          required
+        />
         <button type="submit">Create Block</button>
       </form>
       {message && <p>{message}</p>}

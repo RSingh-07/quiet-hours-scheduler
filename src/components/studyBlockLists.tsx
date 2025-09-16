@@ -2,8 +2,17 @@
 import { useEffect, useState } from 'react';
 import supabase from '../lib/supabaseClient';
 
+interface Block {
+  _id: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  notificationSent: boolean;
+  createdAt: string;
+}
+
 export default function StudyBlockLists() {
-  const [blocks, setBlocks] = useState([]);
+  const [blocks, setBlocks] = useState<Block[]>([]);
 
   useEffect(() => {
     const fetchBlocks = async () => {
@@ -21,7 +30,7 @@ export default function StudyBlockLists() {
 
   return (
     <ul>
-      {blocks.map((block: any) => (
+      {blocks.map((block) => (
         <li key={block._id}>
           {block.title} — {new Date(block.startTime).toLocaleString()}
         </li>

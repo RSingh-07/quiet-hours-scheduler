@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import supabase from '../../lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -11,22 +11,35 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    const { error } = await supabase.auth.signUp({ email, password });
 
     if (error) setMessage(error.message);
     else {
-      setMessage('Signup successful! Redirecting to login...');
-      setTimeout(() => router.push('/login'), 1500); // redirect to login
+      setMessage('Signup successful! Please check your email.');
+      router.push('/login'); // redirect after signup
     }
   };
 
   return (
     <div>
-      <h1>Signup</h1>
+      <h1>Sign Up</h1>
       <form onSubmit={handleSignup}>
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" required />
-        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required />
-        <button type="submit">Signup</button>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        <button type="submit">Sign Up</button>
       </form>
       {message && <p>{message}</p>}
     </div>
