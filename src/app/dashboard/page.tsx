@@ -3,16 +3,16 @@
 import { useState, useEffect } from 'react';
 import supabase from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [title, setTitle] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [message, setMessage] = useState('');
   const router = useRouter();
 
-  // Get logged-in user
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -25,9 +25,9 @@ export default function DashboardPage() {
     getUser();
   }, [router]);
 
-  // Handle block creation
   const handleCreateBlock = async () => {
     if (!user) return;
+
     try {
       const res = await fetch('/api/createBlock', {
         method: 'POST',
@@ -37,12 +37,12 @@ export default function DashboardPage() {
           startTime,
           endTime,
           userId: user.id,
-          userEmail: user.email
-        })
+          userEmail: user.email,
+        }),
       });
 
-      const data = await res.json();
-      if (data.success) {
+      const result = await res.json();
+      if (result.success) {
         setMessage('Block created successfully!');
         setTitle('');
         setStartTime('');
@@ -60,6 +60,7 @@ export default function DashboardPage() {
     <div>
       <h1>Dashboard</h1>
       <p>Welcome, {user?.email}</p>
+
       <input
         type="text"
         placeholder="Block Title"
