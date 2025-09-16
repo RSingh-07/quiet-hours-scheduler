@@ -1,34 +1,24 @@
-import { NextResponse } from 'next/server';
-import clientPromise from '../../../lib/mongodb';
+import { NextRequest, NextResponse } from 'next/server';
+import clientPromise from '@/lib/mongodb';
 
-interface TimeBlockBody {
-  title: string;
-  startTime: string;
-  endTime: string;
-}
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { title, startTime, endTime } = (await req.json()) as TimeBlockBody;
-
-    if (!title || !startTime || !endTime) {
-      return NextResponse.json({ success: false, error: 'Missing fields' }, { status: 400 });
-    }
-
+    const data = await req.json();
     const client = await clientPromise;
-    const db = client.db(process.env.MONGODB_DB);
-
-    const result = await db.collection('blocks').insertOne({
-      title,
-      startTime: new Date(startTime),
-      endTime: new Date(endTime),
+    const db = client.db('quiet-hours');
+    await db.collection('blocks').insertOne({
+      title: data.title,
+      userId: data.userId,
+      userEmail: data.userEmail,
+      startTime: new Date(data.startTime),
+      endTime: new Date(data.endTime),
       notificationSent: false,
-      createdAt: new Date(),
+      createdAt: new Date()
     });
 
-    return NextResponse.json({ success: true, block: result });
+    return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ success: false, error: 'Failed to create block' }, { status: 500 });
+    return NextResponse.json({ success: false });
   }
 }
