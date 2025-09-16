@@ -1,13 +1,5 @@
-import clientPromise from "@/lib/mongodb";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 export async function GET() {
-  try {
-    const client = await clientPromise;
-    const db = client.db(process.env.MONGODB_DB);
-    const collections = await db.listCollections().toArray();
-    return NextResponse.json({ success: true, collections });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message });
-  }
+  return NextResponse.json({ success: true, message: 'API works!' });
 }

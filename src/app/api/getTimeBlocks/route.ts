@@ -1,15 +1,28 @@
-import clientPromise from "@/lib/mongodb";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import clientPromise from '../../../lib/mongodb';
+import { ObjectId } from 'mongodb';
 
-export async function GET(req: Request) {
+interface Block {
+  _id: ObjectId;
+  title: string;
+  startTime: string;
+  endTime: string;
+  notificationSent: boolean;
+  createdAt: string;
+}
+
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url);
-    const user_id = searchParams.get("user_id");
     const client = await clientPromise;
-    const db = client.db(process.env.MONGODB_DB);
-    const blocks = await db.collection("time_blocks").find({ user_id }).toArray();
-    return NextResponse.json(blocks);
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message });
+    const dbName = process.env.MONGODB_DB;
+    if (!dbName) throw new Error('MONGODB_DB not defined');
+
+    const db = client.db(dbName);
+    const blocks = (await db.collection('blocks').find({}).toArray()) as Block[];
+
+    return NextResponse.json({ blocks });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ blocks: [], error: 'Failed to fetch blocks' }, { status: 500 });
   }
 }
