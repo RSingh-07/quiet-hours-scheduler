@@ -17,8 +17,9 @@ export default function SignUpPage() {
         password,
       });
 
-      if (error) setMessage(error.message);
-      else {
+      if (error) {
+        setMessage(error.message);
+      } else {
         setMessage('Sign up successful! Check your email to confirm.');
         router.push('/login');
       }

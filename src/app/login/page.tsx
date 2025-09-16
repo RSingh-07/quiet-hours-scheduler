@@ -20,7 +20,7 @@ export default function LoginPage() {
       if (error) setMessage(error.message);
       else {
         setMessage('Login successful!');
-        router.push('/dashboard'); // redirect to dashboard
+        router.push('/dashboard');
       }
     } catch (err) {
       console.error(err);
