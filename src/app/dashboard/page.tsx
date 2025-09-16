@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import supabase from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null); // ✅ no 'any'
+  const [user, setUser] = useState<User | null>(null); // ✅ no any
   const [title, setTitle] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -14,15 +14,15 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const getUser = async () => {
+    async function fetchUser() {
       const { data } = await supabase.auth.getUser();
       if (!data.user) {
         router.push('/login');
       } else {
         setUser(data.user);
       }
-    };
-    getUser();
+    }
+    fetchUser();
   }, [router]);
 
   const handleCreateBlock = async () => {
@@ -40,7 +40,6 @@ export default function DashboardPage() {
           userEmail: user.email,
         }),
       });
-
       const result = await res.json();
       if (result.success) {
         setMessage('Block created successfully!');
@@ -50,8 +49,8 @@ export default function DashboardPage() {
       } else {
         setMessage('Error creating block.');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       setMessage('Something went wrong.');
     }
   };
@@ -60,24 +59,23 @@ export default function DashboardPage() {
     <div>
       <h1>Dashboard</h1>
       <p>Welcome, {user?.email}</p>
-
       <input
         type="text"
         placeholder="Block Title"
         value={title}
-        onChange={e => setTitle(e.target.value)}
+        onChange={(e) => setTitle(e.target.value)}
       />
       <input
         type="datetime-local"
         placeholder="Start Time"
         value={startTime}
-        onChange={e => setStartTime(e.target.value)}
+        onChange={(e) => setStartTime(e.target.value)}
       />
       <input
         type="datetime-local"
         placeholder="End Time"
         value={endTime}
-        onChange={e => setEndTime(e.target.value)}
+        onChange={(e) => setEndTime(e.target.value)}
       />
       <button onClick={handleCreateBlock}>Create Block</button>
       <p>{message}</p>

@@ -11,20 +11,16 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      }); // ✅ only destructure error
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    }); // ✅ only error, no unused data
 
-      if (error) setMessage(error.message);
-      else {
-        setMessage('Login successful!');
-        router.push('/dashboard');
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage('Something went wrong.');
+    if (error) {
+      setMessage(error.message);
+    } else {
+      setMessage('Login successful!');
+      router.push('/dashboard');
     }
   };
 
@@ -35,13 +31,13 @@ export default function LoginPage() {
         type="email"
         placeholder="Email"
         value={email}
-        onChange={e => setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
-        onChange={e => setPassword(e.target.value)}
+        onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleLogin}>Login</button>
       <p>{message}</p>
